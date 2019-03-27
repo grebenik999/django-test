@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load mptt_tags %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+            <div class="profile-sidebar">
+                <div class="d-flex justify-content-center h-100">
+                    <div class="image_outer_container">
+                        <div class="image_inner_container">
+                            {% if worker.image %}
+                            <img src="{{ worker.image.url }}" class="img-responsive" alt="">
+                            {% else %}
+                            <img src="/media/default-image.png" class="img-responsive" alt="">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-usertitle">
+                    <div class="profile-usertitle-name">
+                        {{ worker.username }}
+                    </div>
+                </div>
+                <div class="profile-userbuttons">
+                    <div class="btn-group ml-auto" role="group" aria-label="Basic example">
+                        <!-- Update -->
+                        <a href="{% url 'update-employee' worker.id %}" type="button"
+                            class="btn btn-warning btn-sm">Update</a>
+                        <!-- Delete -->
+                        <form id="del-worker-form" method="POST" action="{% url 'delete_employee' pk=worker.id %}">
+                            {% csrf_token %}
+                            <input type="hidden">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="profile-usermenu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            {% if worker.department is not None %}
+                            <a class="nav-link active" href="#">
+                                <i class="fa fa-home"></i>
+                                {{worker.department}}
+                            </a>
+                            {% else %}
+                            <a class="nav-link active" href="{% url 'new-department' %}">
+                                <i class="fa fa-home"></i>
+                                Add Department</a>
+                            {% endif %}
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-flag"></i>
+                                {{ worker.position }} </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-clock-o"></i>
+                                {{ worker.hire_date| date:"d M Y" }} </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" target="_blank">
+                                <i class="fa fa-usd"></i>
+                                {{ worker.salary }} </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

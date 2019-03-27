@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load mptt_tags %}
+
+{% block content %}
+
+{% if departments %}
+<section id="employee">
+    <h3 class="text-center mt-3 mb-3">Company Human Resources</h3>
+    <hr>
+    <div class="container">
+        <div class="row mb-3">
+
+            <!-- Add Auth Verification -->
+            <div class="col-8">
+                <!-- Button Create Department -->
+                <a href="{% url 'new-department' %}" type="button" class="btn btn-primary btn-sm"> Create a
+                    Department</a>
+                <!-- Button add user modal -->
+                <a href="{% url 'new-employee' %}" type="button" class="btn btn-success btn-sm">Add Employee</a>
+            </div>
+            <div class="col-4 text-right">
+                {% include 'partials/_search.html' %}
+            </div>
+
+        </div>
+
+        <!-- Nested Test -->
+        <div class="row">
+            <div class="col">
+                <div class="cf nestable-lists">
+                    <div class="dd" id="nestable">
+                        <ol class="dd-list">
+                            {% recursetree departments %}
+                            <li class="dd-item" data-id="{{ node.id }}">
+                                <span id="del-dep-form">
+                                    <!-- Delete -->
+                                    <form method="POST" action="{% url 'delete_department' node.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete Department</button>
+                                    </form>
+                                </span>
+                                <div class="dd-handle">
+                                    <div class="worker-detail">
+                                        <strong>{{ node }}</strong>
+                                    </div>
+                                </div>
+                                <ol class="dd-list">
+                                    {% for worker in workers %}
+                                    {% if worker.department_id == node.id %}
+                                    <li class="dd-item" data-id="{{ worker.id }}">
+                                        <div class="dd-handle">
+                                            <div class="worker-detail-wrap">
+                                                <div class="worker-detail">
+                                                    <span>
+                                                        {{ worker.username }}
+                                                    </span>
+                                                    <span>
+                                                        {{ worker.position }}
+                                                    </span>
+                                                    <span>
+                                                        {{ worker.hire_date|date:'d-m-Y' }}
+                                                    </span>
+
+                                                    <span>
+                                                        $ {{ worker.salary }}
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {% endif %}
+                                    {% endfor %}
+                                </ol>
+                            </li>
+                            {% if not node.is_leaf_node %}
+                            <ul class="children">
+                                {{ children }}
+                            </ul>
+                            {% else %}
+                            <ul class="children">
+                                {{ children }}
+                            </ul>
+                            {% endif %}
+                            {% endrecursetree %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% else %}
+<div class="container mt-3 mb-3">
+    <h3 class="text-center mt-3 mb-3">Company Human Resources</h3>
+    <hr>
+    <div class="row mb-3">
+        <div class="col-8">
+            <h5>Please Add the Department</h5>
+        </div>
+        <!-- Button create Department modal -->
+        <div class="col-4">
+            <!-- Button Create Department -->
+            <a href="{% url 'new-department' %}" type="button" class="btn btn-primary btn-sm"> Create a Department</a>
+            <!-- Button add user modal -->
+            <a href="{% url 'new-employee' %}" type="button" class="btn btn-success btn-sm">Add Employee</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
